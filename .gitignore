@@ -1,0 +1,5 @@
+Template bot cTrader.sln
+.vscode/tasks.json
+Template bot cTrader/Template bot cTrader.csproj
+Template bot cTrader/bin/*
+Template bot cTrader/obj/*
