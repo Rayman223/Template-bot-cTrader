@@ -46,12 +46,6 @@ namespace cAlgo.Robots
         [Parameter("Break-even Margin (pips)", Group = "SL/TP", DefaultValue = 1, MinValue = 0, MaxValue = 100, Step = 0.1)]
         public int BreakEvenMarginPips { get; set; }
 
-        [Parameter("Distance from Kumo (pips)", Group = "SL/TP", DefaultValue = 3, MaxValue = 10, MinValue = 0, Step = 1)]
-        public int DistanceKumo { get; set; }
-
-        [Parameter("Kumo width min (pips)", Group = "SL/TP", DefaultValue = 3, MaxValue = 5, MinValue = 0, Step = 1)]
-        public int MinKumoWidth { get; set; }
-
         [Parameter("Total loss", Group = "Risk", DefaultValue = 200, MaxValue = 1000, MinValue = 0, Step = 1)]
         public int MaxLoss { get; set; }
 
