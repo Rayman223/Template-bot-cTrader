@@ -278,7 +278,7 @@ namespace cAlgo.Robots
                 {
                     double newStopLoss = position.TradeType == TradeType.Buy
                         ? position.EntryPrice + (BreakEvenMarginPips * Symbol.PipSize)
-                        : position.EntryPrice - (BreakEvenMarginPips * Symbol.PipSize);
+                        : position.EntryPrice - (BreakEvenMarginPips * Symbol.PipSize) - GetSpreadInPips();
 
                     if ((position.TradeType == TradeType.Buy && newStopLoss > position.StopLoss) ||
                         (position.TradeType == TradeType.Sell && newStopLoss < position.StopLoss))
@@ -457,6 +457,7 @@ namespace cAlgo.Robots
 
         private double GetSpreadInPips()
         {
+            // Symbol.Spread ?
             return (Symbol.Ask - Symbol.Bid) / Symbol.PipSize;
         }
     }
