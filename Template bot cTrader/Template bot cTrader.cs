@@ -299,8 +299,8 @@ namespace cAlgo.Robots
                 double currentPrice = position.TradeType == TradeType.Buy ? Symbol.Bid : Symbol.Ask;
                 //double breakEvenPrice = position.EntryPrice;
                 double breakEvenPrice = position.TradeType == TradeType.Buy
-                    position.EntryPrice + BreakEvenMarginPips * Symbol.PipSize
-                    position.EntryPrice - (BreakEvenMarginPips * Symbol.PipSize) - Symbol.Spread;
+                    ? position.EntryPrice + BreakEvenMarginPips * Symbol.PipSize
+                    : position.EntryPrice - (BreakEvenMarginPips * Symbol.PipSize) - Symbol.Spread;
 
                 // Vérifie si le prix a dépassé le niveau de Break-even
                 if ((position.TradeType == TradeType.Buy && currentPrice > breakEvenPrice) ||
