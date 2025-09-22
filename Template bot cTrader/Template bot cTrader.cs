@@ -37,12 +37,14 @@ namespace cAlgo.Robots
         [Parameter("Take Profit (pips)", Group = "SL/TP", DefaultValue = 26, MaxValue = 100, MinValue = 1, Step = 1)]
         public int TakeProfitPips { get; set; }
 
+        // Nomber of pips for new SL after Break-even
         [Parameter("Trailing Stop (pips)", Group = "SL/TP", DefaultValue = 12, MaxValue = 100, MinValue = 1, Step = 1)]
         public int TrailingStopPips { get; set; }
 
+        // Number of pips when new SL on price
         [Parameter("Break-even Trigger (pips)", Group = "SL/TP", DefaultValue = 7, MaxValue = 20, MinValue = 1, Step = 1)]
         public int BreakEvenTriggerPips { get; set; }
-
+        // Margin add to the price for the new SL
         [Parameter("Break-even Margin (pips)", Group = "SL/TP", DefaultValue = 1, MinValue = 0, MaxValue = 100, Step = 0.1)]
         public int BreakEvenMarginPips { get; set; }
 
@@ -295,7 +297,10 @@ namespace cAlgo.Robots
             foreach (var position in Positions.FindAll("RaymanBot", SymbolName))
             {
                 double currentPrice = position.TradeType == TradeType.Buy ? Symbol.Bid : Symbol.Ask;
-                double breakEvenPrice = position.EntryPrice;
+                //double breakEvenPrice = position.EntryPrice;
+                double breakEvenPrice = position.TradeType == TradeType.Buy
+                    position.EntryPrice + BreakEvenMarginPips * Symbol.PipSize
+                    position.EntryPrice - (BreakEvenMarginPips * Symbol.PipSize) - Symbol.Spread;
 
                 // Vérifie si le prix a dépassé le niveau de Break-even
                 if ((position.TradeType == TradeType.Buy && currentPrice > breakEvenPrice) ||
@@ -458,6 +463,7 @@ namespace cAlgo.Robots
         private double GetSpreadInPips()
         {
             // Symbol.Spread ?
+            // make search because used with trailing stop
             return (Symbol.Ask - Symbol.Bid) / Symbol.PipSize;
         }
     }
