@@ -40,9 +40,11 @@ namespace cAlgo.Robots
         [Parameter("Trailing Stop (pips)", Group = "SL/TP", DefaultValue = 12, MaxValue = 100, MinValue = 1, Step = 1)]
         public int TrailingStopPips { get; set; }
 
-        // SL at half of Break-even
         [Parameter("Break-even Trigger (pips)", Group = "SL/TP", DefaultValue = 7, MaxValue = 20, MinValue = 1, Step = 1)]
         public int BreakEvenTriggerPips { get; set; }
+
+        [Parameter("Break-even Margin (pips)", Group = "SL/TP", DefaultValue = 1, MinValue = 0, MaxValue = 100, Step = 0.1)]
+        public int BreakEvenMarginPips { get; set; }
 
         [Parameter("Distance from Kumo (pips)", Group = "SL/TP", DefaultValue = 3, MaxValue = 10, MinValue = 0, Step = 1)]
         public int DistanceKumo { get; set; }
@@ -281,8 +283,8 @@ namespace cAlgo.Robots
                 if (distance >= BreakEvenTriggerPips * Symbol.PipSize)
                 {
                     double newStopLoss = position.TradeType == TradeType.Buy
-                        ? position.EntryPrice + BreakEvenTriggerPips / 2 * Symbol.PipSize
-                        : position.EntryPrice - BreakEvenTriggerPips / 2 * Symbol.PipSize;
+                        ? position.EntryPrice + (BreakEvenMarginPips * Symbol.PipSize)
+                        : position.EntryPrice - (BreakEvenMarginPips * Symbol.PipSize);
 
                     if ((position.TradeType == TradeType.Buy && newStopLoss > position.StopLoss) ||
                         (position.TradeType == TradeType.Sell && newStopLoss < position.StopLoss))
