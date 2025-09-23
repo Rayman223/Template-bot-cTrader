@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//| Template bot cTrader - Version 0.1                               |
+//| Template bot cTrader - Version 0.2                               |
 //| By Rayman223                                                     |
 //+------------------------------------------------------------------+
 
@@ -245,27 +245,24 @@ namespace cAlgo.Robots
             }
         }
 
-        private long GetDynamicVolume()
+        private double GetDynamicVolume()
         {
             double riskAmount = Account.Balance * (RiskPercent / 100);
             double pipValue = Symbol.PipValue;
 
             if (StopLossPips <= 0 || pipValue <= 0 || MinLotSize <= 0)
-            {
                 throw new ArgumentException("StopLossPips, PipValue or MinLotSize is invalid.");
-            }
 
             double volumeInLots = riskAmount / (StopLossPips * pipValue);
             volumeInLots = Math.Round(volumeInLots, 2);
 
-            // Check if volume is less than minimum lot size
             if (volumeInLots < MinLotSize)
             {
                 Log($"Calculated volume ({volumeInLots}) is less than the minimal size lot ({MinLotSize}). Utilisation of the minimal size lot.", "Warning");
                 volumeInLots = MinLotSize;
             }
 
-            return (long)Symbol.QuantityToVolumeInUnits((long)volumeInLots);
+            return Symbol.QuantityToVolumeInUnits(volumeInLots);
         }
 
         private void ManageBreakEven()
