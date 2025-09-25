@@ -5,6 +5,9 @@ Created by Rayman223.
 
 ---
 
+### Last note
+GetDynamicVolume() seems not working as expected. Investigation required.
+
 ## Overview
 
 This project provides a solid foundation for developing your own automated trading strategies on the cTrader platform.  
@@ -66,9 +69,6 @@ If you make enhancements or fix issues, consider sharing your changes with the c
 
 3. **Build the project:**
    - Use the build tools in your IDE or the cTrader Automate editor.
-
-4. **Load the bot in cTrader:**
-   - Compile and add the resulting `.algo` file to your cTrader platform.
 
 ---
 
