@@ -85,11 +85,11 @@ namespace cAlgo.Robots
             DisplayMarketHours();
 
             // Get Indicator(s) for the selected timeframe
-            
+
             // Get Indicator(s) for xxM timeframe
-            
+
             // Get Indicator(s) for xxH timeframe
-            
+
 
             // Validate parameters
             ValidateParameters();
@@ -472,6 +472,21 @@ namespace cAlgo.Robots
             // Symbol.Spread ?
             // make search because used with trailing stop
             return (Symbol.Ask - Symbol.Bid) / Symbol.PipSize;
+        }
+        
+        // Normalize price to the nearest tick size
+        private double NormalizePrice(double price, TradeType tradeType)
+        {
+            double tickSize = Symbol.TickSize;
+            double normalized;
+
+            if (tradeType == TradeType.Buy)
+                normalized = Math.Floor(price / tickSize) * tickSize;   // Buy
+            else
+                normalized = Math.Ceiling(price / tickSize) * tickSize; // Sell
+
+            // arrondi final au bon nombre de décimales du symbole
+            return Math.Round(normalized, Symbol.Digits);
         }
     }
 }
