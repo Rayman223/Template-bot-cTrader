@@ -267,23 +267,28 @@ namespace cAlgo.Robots
 
         private void ManageBreakEven()
         {
+            // epsilon to avoid frequent small adjustments
+            double epsilon = Symbol.PipSize / 2;
+
             foreach (var position in Positions.FindAll("RaymanBot", SymbolName))
             {
                 double distance = position.TradeType == TradeType.Buy
-                    ? Symbol.Bid - position.EntryPrice
-                    : position.EntryPrice - Symbol.Ask;
+                    ? Math.Round(Symbol.Bid - position.EntryPrice, 5)
+                    : Math.Round(position.EntryPrice - Symbol.Ask, 5);
 
                 if (distance >= BreakEvenTriggerPips * Symbol.PipSize)
                 {
                     double newStopLoss = position.TradeType == TradeType.Buy
                         ? position.EntryPrice + (BreakEvenMarginPips * Symbol.PipSize)
                         : position.EntryPrice - (BreakEvenMarginPips * Symbol.PipSize) - GetSpreadInPips();
+                    // Normalize the new stop loss price
+                    newStopLoss = NormalizePrice(newStopLoss, position.TradeType);
 
-                    if ((position.TradeType == TradeType.Buy && newStopLoss > position.StopLoss) ||
-                        (position.TradeType == TradeType.Sell && newStopLoss < position.StopLoss))
+                    if ((position.TradeType == TradeType.Buy && newStopLoss > position.StopLoss + epsilon) ||
+                        (position.TradeType == TradeType.Sell && newStopLoss < position.StopLoss - epsilon))
                     {
-                        position.ModifyStopLossPrice(newStopLoss);
                         Log($"Break-even adjusted | distance={distance} | New SL={newStopLoss} | Entry={position.EntryPrice}", "Info");
+                        position.ModifyStopLossPrice(newStopLoss);
                     }
                 }
             }
@@ -291,6 +296,9 @@ namespace cAlgo.Robots
 
         private void ManageTrailingStop()
         {
+            // epsilon to avoid frequent small adjustments
+            double epsilon = Symbol.PipSize / 2;
+
             foreach (var position in Positions.FindAll("RaymanBot", SymbolName))
             {
                 double currentPrice = position.TradeType == TradeType.Buy ? Symbol.Bid : Symbol.Ask;
@@ -307,14 +315,16 @@ namespace cAlgo.Robots
                     double newStopLoss = position.TradeType == TradeType.Buy
                         ? currentPrice - TrailingStopPips * Symbol.PipSize
                         : currentPrice + TrailingStopPips * Symbol.PipSize;
+                    // Normalize the new stop loss price
+                    newStopLoss = NormalizePrice(newStopLoss, position.TradeType);
 
-                    double CurrentPips = (newStopLoss - position.EntryPrice) / Symbol.PipSize;
+                    double CurrentPips = Math.Round((newStopLoss - position.EntryPrice) / Symbol.PipSize, 2);
                     // Applique le nouveau Stop Loss uniquement s'il est plus favorable
-                    if ((position.TradeType == TradeType.Buy && newStopLoss > position.StopLoss && newStopLoss > breakEvenPrice) ||
-                        (position.TradeType == TradeType.Sell && newStopLoss < position.StopLoss && newStopLoss < breakEvenPrice))
+                    if ((position.TradeType == TradeType.Buy && newStopLoss > position.StopLoss + epsilon && newStopLoss > breakEvenPrice) ||
+                        (position.TradeType == TradeType.Sell && newStopLoss < position.StopLoss - epsilon && newStopLoss < breakEvenPrice))
                     {
-                        position.ModifyStopLossPrice(newStopLoss);
                         Log($"Trailing Stop ajusted | New SL={newStopLoss} | Actual price={currentPrice} | Entry={position.EntryPrice} | Pips={CurrentPips}", "Info");
+                        position.ModifyStopLossPrice(newStopLoss);
                     }
                 }
             }
